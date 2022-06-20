@@ -6,6 +6,7 @@ import Login from './Login';
 import Search from './Search';
 import MyVelog from './MyVelog';
 import Write from './Write';
+import Register from './Register';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/search" exact element={<Search />} />
           <Route path="/myvelog/*" exact element={<MyVelog />} />
           <Route path="/write" exact element={<Write />} />
+          <Route path="/register" exact element={<Register />} />
         </Routes>
     </div>
   );
