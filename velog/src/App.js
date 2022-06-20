@@ -5,7 +5,7 @@ import Detail from './Detail';
 import Login from './Login';
 import Search from './Search';
 import MyVelog from './MyVelog';
-import Writing from './Posting';
+import Write from './Write';
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
           <Route path="/detail" exact element={<Detail />} />
           <Route path="/search" exact element={<Search />} />
           <Route path="/myvelog/*" exact element={<MyVelog />} />
-          <Route path="/writing" exact element={<Writing />} />
+          <Route path="/write" exact element={<Write />} />
         </Routes>
     </div>
   );
