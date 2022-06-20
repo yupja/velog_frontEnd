@@ -1,26 +1,12 @@
-<<<<<<< Updated upstream
-=======
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux/es/exports";
->>>>>>> Stashed changes
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { getpostAc } from "./redux/modules/post";
 
 const Main = () => {
-<<<<<<< Updated upstream
-    return (
-        <>
-        <h1>메인 페이지 입니다</h1>
-        <Link to="/detail">
-        <div style={{width:"100px", height:"100px", backgroundColor:"wheat"}}>게시글 1</div>
-       </Link>
-        </>
-        
-    );
-}
-=======
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const list_data = useSelector((state) => state.post.list)
@@ -185,7 +171,6 @@ border-radius: 25px;
 border: 1px solid black;
 margin-right: 10px;
 `;
->>>>>>> Stashed changes
 
 
 
