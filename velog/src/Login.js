@@ -1,9 +1,13 @@
 import { useState } from "react";
 import styled from "styled-components";
 import axios from "axios"
+import {Cookies} from 'react-cookie'
 
-const Login = (props) => {
+const Login = (props) => {  
+    const cookies = new Cookies()
+
     const [register, setRegister] = useState(false);
+
     const [Email, setEmail] = useState("");
     const [Password, setPassword] = useState("");
     const [PWComfirm, setPWConfirm] = useState("");
@@ -27,8 +31,9 @@ const Login = (props) => {
         setIntroduce(event.currentTarget.value)
     }
 
+    //회원가입 onClick 함수
     const Register = () => {
-        axios.post('http://localhost:5001/user/signup', {
+        axios.post('http://localhost:3001/user', {
             username: UserName,
             password: Password,
             passwordCheck: PWComfirm,
@@ -37,10 +42,36 @@ const Login = (props) => {
         })
         .then(function (response) {
             console.log(response)
+
         })
         .catch(function(error){
             console.log(error)
         });
+        Login();
+        window.location.replace("/")
+        
+    }
+
+    const Login = () => {
+        axios.get('http://localhost:3001/user', {
+            params:{
+                username: UserName,
+                password:Password
+            }
+        })
+        .then(function (response){
+            //(프론트용: 로그인 시 id값을 로컬 스토리지에 저장)
+            localStorage.setItem('id', response.data[0].id);
+
+            //access token을 local storage에 저장
+            if(response.token){
+                localStorage.setItem('wtw-token', response.token);
+            }
+            window.location.replace("/")
+        })
+        .catch(function(error){
+            console.log(error)
+        })
     }
 
     return (
@@ -68,11 +99,12 @@ const Login = (props) => {
 
                                         <InputWrapper>
                                             <div style={{ display: "flex", flexDirection: "column" }}>
-                                                <input type="text" placeholder="이름을 입력하세요." />
-                                                <input type="text" placeholder="이메일을 입력하세요." />
-                                                <input type="text" placeholder="비밀번호를 입력하세요." />
-                                                <input type="text" placeholder="비밀번호를 확인하세요." />
-                                                <input type="text" placeholder="당신을 한 줄로 소개해보세요." />
+                                            <input type="text" placeholder="아이디를 입력하세요." onChange={onNameHandler}/>
+                                               
+                                                <input type="password" placeholder="비밀번호를 입력하세요." onChange={onPWHandler}/>
+                                                <input type="password" placeholder="비밀번호를 확인하세요." onChange={onPWConfirmHandler}/>
+                                                <input type="text" placeholder="이메일을 입력하세요." onChange={onEmailHandler}/>
+                                                <input type="text" placeholder="당신을 한 줄로 소개해보세요." onChange={onIntroHandler}/>
                                             </div>
 
                                         </InputWrapper>
@@ -90,10 +122,10 @@ const Login = (props) => {
 
                                         <InputWrapper>
                                             <div style={{ display: "flex", flexDirection: "column" }}>
-                                                <input type="text" placeholder="이메일을 입력하세요" />
-                                                <input type="text" placeholder="비밀번호를 입력하세요" />
+                                                <input type="text" placeholder="아이디를 입력하세요" onChange={onNameHandler}/>
+                                                <input type="password" placeholder="비밀번호를 입력하세요" onChange={onPWHandler}/>
                                             </div>
-                                            <LoginBtn isActive={register}>로그인</LoginBtn>
+                                            <LoginBtn isActive={register} onClick={Login}>로그인</LoginBtn>
                                         </InputWrapper>
 
                                         <div>
