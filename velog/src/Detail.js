@@ -1,9 +1,14 @@
 import axios from "axios";
 import React, { useEffect } from "react"
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const Detail = () => {
     const axios = require('axios').default;
+    const list_data = useSelector((state) => state.post.list)
+    const params = useParams();
+    console.log(list_data)
 
     var post = null;
 
@@ -14,14 +19,14 @@ const Detail = () => {
 
     const getBoard = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/GetBoardDetail');
+            const response = await axios.get('http://localhost:5001/GetBoardDetail');
             console.log(response.data[0]);
             return post = response.data[0]
         } catch (error) {
             console.log(error)
         }}
 
-        console.log(post)
+    
     return (
         <DetailContainer>
             <h1>디테일 페이지 입니다</h1>

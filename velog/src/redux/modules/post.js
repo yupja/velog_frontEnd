@@ -3,6 +3,8 @@ import axios from "axios";
 //action
 const GET_POST = "GET_POST"
 const ADD_POST = "ADD_POST"
+const CREATE = "CREATE"
+
 
 const initialState = {
     list: [
@@ -15,6 +17,10 @@ const initialState = {
       }
     ],
   };
+
+  export function createPost(post){
+    return { type: CREATE, post}
+  }
 
   //action creators
   export function getPost (post_list){
@@ -50,6 +56,31 @@ const initialState = {
     };
   };
 
+  export const createPostAc = (title, content, contentSummary, tagStrings, imgpath) => {
+    console.log(title, content, contentSummary, tagStrings, imgpath);
+    return function (dispatch) {
+      axios
+        .post("http://localhost5001/GetBoardDetail", {
+          title: title,
+          content: content,
+          contentSummary: contentSummary,
+          tagStrings: tagStrings,
+          imgpath: imgpath,
+        })
+        .then((response) => {
+          console.log(response);
+          dispatch(createPost())
+          alert("출간 완료");
+          window.location.replace("/");
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("다시 시도해주세요")
+        });
+    };
+  };
+
+
   //reducer
   export default function reducer(state = initialState, action = {}){
     switch (action.type) {
@@ -59,6 +90,10 @@ const initialState = {
         case "ADD_POST": {
           const new_post_list = [action.post]
             return { list: new_post_list, ...state };
+        }
+        case "CREATE": {
+          const new_post_list = [...state.list, action.post];
+          return { list: new_post_list }
         }
 
         default:

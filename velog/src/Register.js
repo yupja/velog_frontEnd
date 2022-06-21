@@ -1,6 +1,58 @@
+import React, {useState, useRef} from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
+import { storage } from "./shared/firebase";
+import { createPostAc } from "./redux/modules/post";
 
-const Register = () => {
+
+const Register = (props) => {
+
+
+    const dispatch = useDispatch();
+    const imgRef = React.useRef();
+    const title_ref = React.useRef();
+    const contentSummary_ref = React.useRef();
+    const storage = getStorage();
+
+
+    const [imgFile, setImgFile] = useState();
+
+    const styleButton = () =>{
+        let myInput = document.getElementById("input-file");
+              myInput.click();
+            }
+
+    const uploadIMG = async (e) => {
+        const uploded_file = await uploadBytes(
+            ref(storage, `images/${e.target.files[0].name}`),
+            e.target.files[0]);
+            fileImagePreview(e.target.files[0]);
+            const file_url = await getDownloadURL(uploded_file.ref);
+            imgRef.current = { url : file_url};
+    };
+
+    const fileImagePreview = (fileBlob) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(fileBlob);
+
+        return new Promise((resolve) => {
+            reader.onload = () => {
+                setImgFile(reader.result);
+                resolve();
+            };
+
+        });
+
+    };
+    const postAc = ()=>{
+        console.log(title_ref.current.value, contentSummary_ref.current.value, imgFile);
+        dispatch(createPostAc({
+            title : title_ref.current.value,
+            contentSummary : contentSummary_ref.current.value,
+            imgpath : imgFile
+        }))};
+
     return (
         <>
         <div style={{height:"100%", width:"100%", backgroundColor:"red"}}></div>
@@ -8,12 +60,13 @@ const Register = () => {
             <Left>
                 <Ph4>포스트 미리보기</Ph4>
                 <div style={{height:"194px", width:"320px", backgroundColor:"#e9ecef", position:"relative"}}>
-                    <img></img>
-                    <Thumbbtn>썸네일 업로드</Thumbbtn>
+                    <img src={imgFile} style={{width:"320px" ,height:"140px"}} />
+                    <input type="file" name="file" id="input-file" ref={imgRef} onChange={uploadIMG} style={{display:"none"}}></input>
+                    <Thumbbtn onClick={styleButton}>썸네일 업로드</Thumbbtn>
                 </div>
-                <Ph4>title</Ph4>
-                <DeInput></DeInput>
-                <p style={{textAlign:"right"}}>desc.length/150</p>
+                <Ph4 ref={title_ref}>title</Ph4>
+                <DeInput ref={contentSummary_ref} />
+                <p style={{textAlign:"right"}}>contentSummary.length /150</p>
             </Left>
             <Right>
                 <Rp>공개 설정</Rp>
@@ -26,7 +79,7 @@ const Register = () => {
                 <Rp>시리즈 설정</Rp>
                 <SeriesBtn>시리즈에 추가하기</SeriesBtn>
                 <LastBtn>
-                <CancBtn>취소</CancBtn>
+                <CancBtn onClick={props.BacktoWrite}>취소</CancBtn>
                 <PubBtn>출간하기</PubBtn>
                 </LastBtn>
             </Right>
@@ -65,6 +118,14 @@ border-radius: 4px;
 color: #20c997;
 font-size: 16px;
 font-weight: 700;
+`;
+
+const Input = styled.input`
+height: 32px;
+width: 165px;
+position: absolute;
+top: 60%;
+left: 25%;
 `;
 
 const DeInput = styled.textarea`

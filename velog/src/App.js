@@ -14,11 +14,10 @@ function App() {
       <Header />
         <Routes>
           <Route path="/" exact element={<Main />} />
-          <Route path="/detail" exact element={<Detail />} />
+          <Route path="/detail/:id" exact element={<Detail />} />
           <Route path="/search" exact element={<Search />} />
           <Route path="/myvelog/*" exact element={<MyVelog />} />
           <Route path="/write" exact element={<Write />} />
-          <Route path="/register" exact element={<Register />} />
         </Routes>
     </div>
   );

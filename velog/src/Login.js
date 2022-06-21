@@ -33,7 +33,7 @@ const Login = (props) => {
 
     //회원가입 onClick 함수
     const Register = () => {
-        axios.post('http://localhost:3001/user', {
+        axios.post('http://localhost:5001/user', {
             username: UserName,
             password: Password,
             passwordCheck: PWComfirm,
@@ -53,7 +53,7 @@ const Login = (props) => {
     }
 
     const Login = () => {
-        axios.get('http://localhost:3001/user', {
+        axios.get('http://localhost:5001/user', {
             params:{
                 username: UserName,
                 password:Password
