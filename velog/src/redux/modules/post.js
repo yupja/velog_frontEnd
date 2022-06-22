@@ -5,6 +5,7 @@ const GET_POST = "GET_POST"
 const ADD_POST = "ADD_POST"
 const CREATE = "CREATE"
 const REMOVE = "REMOVE"
+const UPDATE = "UPDATE"
 
 
 const initialState = {
@@ -36,6 +37,9 @@ export function addPost(post) {
 };
 export function removePost(post_index) {
   return { type: REMOVE, post_index }
+}
+export function updatePost(post_index){
+  return {type:UPDATE, post_index}
 }
 
 //middlewares
@@ -105,6 +109,22 @@ export const deletePostDB = (postID, token) => {
   }
 }
 
+export const UpdatePostDB = (postID, post, token) => {
+  return function (dispatch) {
+    axios.put(`http://3.34.178.13/boards/${postID}`, post, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then((response) => {
+      console.log(response)
+      dispatch(updatePost(postID))
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+}
+
 
 //reducer
 export default function reducer(state = initialState, action = {}) {
@@ -120,6 +140,13 @@ export default function reducer(state = initialState, action = {}) {
       const new_post_list = [...state.list, action.post];
       return { list: new_post_list }
     }
+    case "UPDATE": {
+      const new_post_list = state.list.map((l, idx)=>{
+          if (parseInt(action.post_index) === idx){
+          } else { return l; }
+      })
+      return { list: new_post_list };
+  }
     case "REMOVE": {
       const new_post_list = [...state.list.filter(list => list !== action.post_index)]
       return { list: new_post_list }

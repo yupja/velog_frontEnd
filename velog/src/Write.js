@@ -8,21 +8,25 @@ import Register from "./Register"
 import { useEffect, useRef } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useMatch, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getpostDetailDB } from "./redux/modules/postDetail";
 
 const Write = () => {
+    const [postEdit, setPostEdit] = useState(false);
     const storage = getStorage();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    const params = useParams();
+    const post_index = params.id
+    const matchBoard = useMatch(`/write/${post_index}`)
+    const post_detail = useSelector((state) => state.postDetail.list)
 
     const [title, setTitle] = useState("");
     const [tag, setTag] = useState("");
     const [content, setContent] = useState("")
 
     const editorRef = React.useRef()
-
 
     //register창 띄우기
     const [thumb, setThumb] = React.useState(false);
@@ -66,8 +70,13 @@ const Write = () => {
 
     useEffect(() => {
         const editorIns = editorRef.current.getInstance();
-        // editorIns.removeHook("addImageBlobHook"); //<- 제거 
-        // editorIns.addHook('addImageBlobHook', uploadFB); //<- 추가 }
+
+        if (matchBoard !== null) {
+            dispatch(getpostDetailDB(post_index))
+            setPostEdit(true);
+        } else {
+            setPostEdit(false);
+        }
     }, []);
 
 
@@ -86,29 +95,28 @@ const Write = () => {
                 </Reg>
             )}
 
-            {/* {publish ? <Register publish={publish} BacktoWrite={BacktoWrite} />
-                    : null} */}
-            <>
+            {postEdit ? <>
 
-                <TitleInput placeholder="제목을 입력하세요" onChange={onTitleHandler} />
+                <TitleInput placeholder="제목을 입력하세요" onChange={onTitleHandler} defaultValue={post_detail.title}/>
                 <div style={{ backgroundColor: "#495057", height: "6px", width: "64px", margin: "0px 25px" }} />
                 <Tag>
-                    <input placeholder="태그를 입력하세요" onChange={onTagHandler} />
+                    <input placeholder="태그를 입력하세요" onChange={onTagHandler} defaultValue={post_detail.tagString}/>
                 </Tag>
 
                 <Editor
+
+                   
                     onChange={() => setContent(getMarkDown())}
+                    initialValue="예시"
                     ref={editorRef}
-                    placeholder="당신의 이야기를 적어보세요. . ."
+                   
                     previewStyle="vertical"
                     height="80vh"
 
-                    initialEditType="markdown"
                     useCommandShortcut={false}
                     previewHighlight={false}
-                    hideModeSwitch={false}
+                    hideModeSwitch={true}
 
-                    // toolbarItems={[['bold', 'italic', 'strike'], ['image']]}
                     hooks={{
                         addImageBlobHook: async (blob, callback) => {
 
@@ -129,6 +137,52 @@ const Write = () => {
 
                 </Header>
             </>
+
+
+                :
+
+                <>
+
+                    <TitleInput placeholder="제목을 입력하세요" onChange={onTitleHandler} />
+                    <div style={{ backgroundColor: "#495057", height: "6px", width: "64px", margin: "0px 25px" }} />
+                    <Tag>
+                        <input placeholder="태그를 입력하세요" onChange={onTagHandler} />
+                    </Tag>
+
+                    <Editor
+                        onChange={() => setContent(getMarkDown())}
+                        ref={editorRef}
+                        previewStyle="vertical"
+                        height="80vh"
+                        initialValue="예시"
+                        placeholder="당신의 이야기를 적어보세요 ... "
+                        useCommandShortcut={false}
+                        previewHighlight={false}
+                        hideModeSwitch={true}
+
+                        hooks={{
+                            addImageBlobHook: async (blob, callback) => {
+
+                                console.log(blob)
+                                const uploaded_file = await uploadBytes(
+                                    ref(storage, `images/${blob.name}`), blob
+                                );
+                                const file_url = await getDownloadURL(uploaded_file.ref)
+                                callback(file_url, 'img ALT');
+                            }
+                        }}
+                    />
+
+                    <Header>
+                        <BackBtn>뒤로가기</BackBtn>
+                        {/* <PublishBtn onClick={Publish}>출간하기</PublishBtn> */}
+                        <PublishBtn onClick={() => { setThumb(true) }}><span>출간하기</span></PublishBtn>
+
+                    </Header>
+                </>
+
+            }
+
 
         </div>
 

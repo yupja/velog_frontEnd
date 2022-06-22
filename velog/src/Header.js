@@ -4,30 +4,7 @@ import styled from "styled-components";
 import { Navigate, useNavigate,Link } from "react-router-dom";
 import Login from "./Login";
 
-const Header = () => {
-    const [isLogin, setIsLogin] = useState(false)
-
-    const isLoginCheck = () => {
-        //토큰 부분으로 바꿔야함
-        localStorage.getItem('username')
-        localStorage.getItem('wtw-token')
-    }
-
-    const LogOut = () => {
-        //토큰 부분으로 바꿔야함
-        localStorage.removeItem('username')
-        localStorage.removeItem('wtw-token');
-        setIsLogin(false);
-    }
-
-    useEffect(() => {
-        isLoginCheck();
-        if (isLoginCheck !== null) {
-            setIsLogin(true);
-        } else {
-            setIsLogin(false);
-        }
-    },[])
+const Header = (props) => {
 
     const [showModal, setShowModal] = useState(false);
 
@@ -60,11 +37,11 @@ const Header = () => {
             </Search>
              {/* 새 글 작성 버튼 1025px이후부터 나옴, 1024부터는 드롭다운에 들어감 */}
              <Link to="/write">새 글 작성</Link>
-                <Link to="/myvelog">내 벨로그</Link>
-                {isLogin ?  <div>프로필사진</div> : <LoginBtn onClick={openModal}>
+                <Link to={`/@${props.Username}`}>내 벨로그</Link>
+                {props.isLogin ?  <div>프로필사진</div> : <LoginBtn onClick={openModal}>
                     로그인
                 </LoginBtn>}
-                <span onClick={LogOut}> 로그아웃</span> 
+                <span onClick={props.LogOut}> 로그아웃</span> 
 
                 {showModal ?
                     <Login showModal={showModal} closeModal={closeModal} />

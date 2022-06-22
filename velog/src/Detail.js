@@ -4,71 +4,48 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { getpostDetailDB } from "./redux/modules/postDetail";
-import Viewer, { toastui } from '@toast-ui/editor/dist/toastui-editor-viewer';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 import ReactMarkdown from "react-markdown"
 import { addCommentDB, getCommentDB, removeCommentDB, updateCommentDB } from "./redux/modules/comments";
 import { compose } from "redux";
 import { deletePostDB } from "./redux/modules/post";
+import { list } from "firebase/storage";
 
 
-const Detail = () => {
-    const [isComment, setIsComment] = useState(false);
+const Detail = (props) => {
     const [commentEdit, setCommentEdit] = useState(false);
     const axios = require('axios').default;
     const params = useParams();
     const list_index = params.id
     const dispatch = useDispatch()
     const content = React.useRef();
-
-    console.log(list_index)
-
-    const token = localStorage.getItem('wtw-token');
-
-
-    const [postIsmine, setPostIsmine] = useState(false);
-    const [cmntIsmine, setCmntIsmine] = useState(false);
-    const Username = localStorage.getItem('username')
-
-    const postMineCheck = () => {
-        if (post_detail.username == Username) {
-            setPostIsmine(true);
-        } else {
-            setPostIsmine(false);
-        }
-    }
-
-    
-
-
-
     const post_detail = useSelector((state) => state.postDetail.list)
     const comments = useSelector((state) => state.comments.list)
 
     useEffect(() => {
-        postMineCheck() 
         dispatch(getpostDetailDB(list_index))
         dispatch(getCommentDB(list_index))
-       
+     
     }, [])
+    
 
     const addComment = () => {
         const comment = {
-            username: Username,
+            username: props.Username,
             content: content.current.value
         };
-        dispatch(addCommentDB(list_index, comment, token))
+        dispatch(addCommentDB(list_index, comment, props.token))
         window.location.reload()
-        console.log(token)
+        console.log(props.token)
     }
 
     const deleteComment = (index) => {
-        dispatch(removeCommentDB(index, token))
+        dispatch(removeCommentDB(index, props.token))
     }
 
     const deletePost = (index) => {
         console.log(index)
-        dispatch(deletePostDB(index,token))
+        dispatch(deletePostDB(index,props.token))
     }
 
     const openEdit = () => {
@@ -77,12 +54,15 @@ const Detail = () => {
 
     const editComment = (index) => {
         const comment = {
-            username: Username,
+            username: props.Username,
             content: content.current.value
         };
-        dispatch(updateCommentDB(index, comment, token))
+        dispatch(updateCommentDB(index, comment, props.token))
     }
 
+    const editPost = (index) => {
+        window.location.replace(`/write/${index}`);
+    }
 
 
     return (
@@ -96,7 +76,10 @@ const Detail = () => {
                 <Tag> {post_detail.tagString} <br /></Tag>
             </TagContainer>
 
-            {postIsmine ? <Mybtn><div>수정&nbsp;&nbsp;</div><div onClick={()=>{deletePost(post_detail.id)}}>삭제</div></Mybtn> : null}<br />
+            {post_detail.username === props.Username ? 
+            <Mybtn><div onClick={()=>{editPost(post_detail.id)}}>수정&nbsp;&nbsp;</div>
+            <div onClick={()=>{deletePost(post_detail.id)}}>삭제</div>
+            </Mybtn> : null}<br />
             
 
 
@@ -127,15 +110,15 @@ const Detail = () => {
                                 {comment.createdAt}
                             </div>
 
-                            {comment.username === Username ? 
+                            {comment.username === props.Username ? 
                             
                                 <div style={{display:"flex", justifyContent: "flex-end", gridColumn:"auto/span 1"}}>
-                                <div onClick={openEdit}>수정&nbsp;&nbsp;</div>
+                                <div onClick={()=>{openEdit(comment.index)}}>수정&nbsp;&nbsp;</div>
                                 <div onClick={()=> deleteComment(comment.id)}> 삭제</div>
                                 </div>
                                 : null} 
                         </CommentData>
-                        {commentEdit ? <textarea defaultValue={comment.content}/> : <>{comment.content}</>}
+                        {commentEdit ? <><textarea defaultValue={comment.content}/><button>취소 </button><button>수정하기</button></> : <>{comment.content}</>}
                         
                     </CommentContainer>
 
@@ -154,6 +137,10 @@ word-break: keep-all;
 overflow-wrap: break-word;
 line-height: 30px;
 padding-bottom: 100px;
+
+img{
+    max-width: 768px;
+}
 
 @media screen and (max-width:768px) {
     width: 90%;
@@ -193,7 +180,7 @@ border-radius: 30px;
 
 const CommentInput = styled.div`
 
-padding-bottom: px;
+padding-bottom: 40px;
 textarea {
     border: 1px solid #eee;
     min-width: 733px;

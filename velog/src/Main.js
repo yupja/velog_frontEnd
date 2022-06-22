@@ -64,12 +64,12 @@ const Main = () => {
 
 };
 
-const DtCmt = styled.div`
+export const DtCmt = styled.div`
   font-size: 0.75rem;
   color: gray;
 `;
 
-const CardWrap = styled.div`
+export const CardWrap = styled.div`
   display: flex;
   width: 20rem;
   background-color: #fff;
@@ -88,13 +88,13 @@ const CardWrap = styled.div`
 } 
 
 `;
-const CardImg = styled.img`
+export const CardImg = styled.img`
   background-color: yellowgreen;
   background-size: cover;
   background-repeat: no-repeat;
   height: 167px;
 `;
-const Body = styled.div`
+export const Body = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -104,7 +104,7 @@ const Body = styled.div`
   height: 140px;
   padding: 16px;
 `;
-const Title = styled.h4`
+export const Title = styled.h4`
   font-size: 16px;
   margin: 0 0 4px;
   font-weight: 900;
@@ -115,7 +115,7 @@ const Title = styled.h4`
   overflow: hidden;
   text-align: left;
 `;
-const Description = styled.p`
+export const Description = styled.p`
   margin: 0 0 24px;
   width: 288px;
   height: 73px;
@@ -133,7 +133,7 @@ const Description = styled.p`
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 `;
-const Footer = styled.div`
+export const Footer = styled.div`
   padding: 10px 16px;
   height: 44px;
   display: flex;
@@ -142,23 +142,23 @@ const Footer = styled.div`
   /* margin: 20px 20px 20px 20px; */
   cursor: pointer;
 `;
-const FooterLeft = styled.div`
+export const FooterLeft = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 `;
-const Span = styled.span`
+export const Span = styled.span`
   color: rgb(134, 142, 150);
   font-size: 0.75rem;
   line-height: 1.5;
   margin-right: 0.25rem;
 `;
-const UserName = styled.span`
+export const UserName = styled.span`
   font-size: 12px;
   font-weight: bold;
 `;
-const Like = styled.div`
+export const Like = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -170,7 +170,7 @@ const Like = styled.div`
     font-size: 1rem;
   }
 `;
-const ProIm = styled.div`
+export const ProIm = styled.div`
 width: 24px;
 height: 24px;
 border-radius: 25px;
