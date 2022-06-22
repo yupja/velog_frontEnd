@@ -5,23 +5,29 @@ import { useSelector } from "react-redux/es/exports";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { getpostAc } from "./redux/modules/post";
+import axios from "axios";
 
 const Main = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const list_data = useSelector((state) => state.post.list)
   console.log(list_data, "리스트?")
+
   React.useEffect(() => {
     dispatch(getpostAc());
   }, []);
+
+  const userCheck = () => {
+    axios.get()
+  }
 
   return (
     <>
       {list_data.map((list, id) => {
         return (
           <>
-            <CardWrap key={list.id} onClick={() => { Navigate(`/detail/${id}`) }}>
-              <CardImg>{list.thumbnail}</CardImg>
+            <CardWrap key={list.id} onClick={() => { Navigate(`/detail/${list.id}`)}}>
+              <CardImg src={list.imgPath}/>
               <Body>
                 <Title>
                   {list.title}
@@ -82,7 +88,7 @@ const CardWrap = styled.div`
 } 
 
 `;
-const CardImg = styled.div`
+const CardImg = styled.img`
   background-color: yellowgreen;
   background-size: cover;
   background-repeat: no-repeat;

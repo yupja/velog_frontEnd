@@ -8,7 +8,11 @@ import MyVelog from './MyVelog';
 import Write from './Write';
 import Register from './Register';
 
+
+
 function App() {
+
+
   return (
     <div className="App">
       <Header />

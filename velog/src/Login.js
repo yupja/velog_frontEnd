@@ -33,10 +33,9 @@ const Login = (props) => {
 
     //회원가입 onClick 함수
     const Register = () => {
-        axios.post('http://localhost:5001/user', {
+        axios.post('http://3.34.178.13/user/signup', {
             username: UserName,
             password: Password,
-            passwordCheck: PWComfirm,
             email: Email,
             introduce: Introduce
         })
@@ -53,21 +52,21 @@ const Login = (props) => {
     }
 
     const Login = () => {
-        axios.get('http://localhost:5001/user', {
-            params:{
+        axios.post('http://3.34.178.13/user/login', {
                 username: UserName,
-                password:Password
+                password: Password
             }
-        })
+        )
         .then(function (response){
+            console.log(response)
             //(프론트용: 로그인 시 id값을 로컬 스토리지에 저장)
-            localStorage.setItem('id', response.data[0].id);
-
             //access token을 local storage에 저장
-            if(response.token){
-                localStorage.setItem('wtw-token', response.token);
+            if(response.data.token){
+                localStorage.setItem('wtw-token', response.data.token);
+                localStorage.setItem('username', UserName)
+                window.location.replace("/")
             }
-            window.location.replace("/")
+            
         })
         .catch(function(error){
             console.log(error)

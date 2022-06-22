@@ -1,51 +1,251 @@
 import axios from "axios";
-import React, { useEffect } from "react"
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import { getpostDetailDB } from "./redux/modules/postDetail";
+import Viewer, { toastui } from '@toast-ui/editor/dist/toastui-editor-viewer';
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import ReactMarkdown from "react-markdown"
+import { addCommentDB, getCommentDB, removeCommentDB, updateCommentDB } from "./redux/modules/comments";
+import { compose } from "redux";
+import { deletePostDB } from "./redux/modules/post";
+
 
 const Detail = () => {
+    const [isComment, setIsComment] = useState(false);
+    const [commentEdit, setCommentEdit] = useState(false);
     const axios = require('axios').default;
-    const list_data = useSelector((state) => state.post.list)
     const params = useParams();
-    console.log(list_data)
+    const list_index = params.id
+    const dispatch = useDispatch()
+    const content = React.useRef();
 
-    var post = null;
+    console.log(list_index)
 
-    useEffect(() => {
-        getBoard()
-    }, [])
+    const token = localStorage.getItem('wtw-token');
 
 
-    const getBoard = async () => {
-        try {
-            const response = await axios.get('http://localhost:5001/GetBoardDetail');
-            console.log(response.data[0]);
-            return post = response.data[0]
-        } catch (error) {
-            console.log(error)
-        }}
+    const [postIsmine, setPostIsmine] = useState(false);
+    const [cmntIsmine, setCmntIsmine] = useState(false);
+    const Username = localStorage.getItem('username')
+
+    const postMineCheck = () => {
+        if (post_detail.username == Username) {
+            setPostIsmine(true);
+        } else {
+            setPostIsmine(false);
+        }
+    }
 
     
+
+
+
+    const post_detail = useSelector((state) => state.postDetail.list)
+    const comments = useSelector((state) => state.comments.list)
+
+    useEffect(() => {
+        postMineCheck() 
+        dispatch(getpostDetailDB(list_index))
+        dispatch(getCommentDB(list_index))
+       
+    }, [])
+
+    const addComment = () => {
+        const comment = {
+            username: Username,
+            content: content.current.value
+        };
+        dispatch(addCommentDB(list_index, comment, token))
+        window.location.reload()
+        console.log(token)
+    }
+
+    const deleteComment = (index) => {
+        dispatch(removeCommentDB(index, token))
+    }
+
+    const deletePost = (index) => {
+        console.log(index)
+        dispatch(deletePostDB(index,token))
+    }
+
+    const openEdit = () => {
+        setCommentEdit(true);
+    }
+
+    const editComment = (index) => {
+        const comment = {
+            username: Username,
+            content: content.current.value
+        };
+        dispatch(updateCommentDB(index, comment, token))
+    }
+
+
+
     return (
         <DetailContainer>
-            <h1>디테일 페이지 입니다</h1>
-            <span>닉네임 </span>
-            작성일자<br />
-            {post}
-            tag1 tag2 tag3<br />
-            썸네일<br />
-            내용
-            <br />
-            0개의 댓글<br />
-            <textarea typeof="text" placeholder="댓글을 작성하세요" />
-            <button>댓글 작성</button>
+            <h1>{post_detail.title}</h1>
+            <PostUser>
+                <span>{post_detail.username} </span>
+                ∙ {post_detail.createdAt}
+            </PostUser>
+            <TagContainer>
+                <Tag> {post_detail.tagString} <br /></Tag>
+            </TagContainer>
+
+            {postIsmine ? <Mybtn><div>수정&nbsp;&nbsp;</div><div onClick={()=>{deletePost(post_detail.id)}}>삭제</div></Mybtn> : null}<br />
+            
+
+
+            <img src={post_detail.imgPath}></img><br />
+
+
+            <ReactMarkdown>{post_detail.content}</ReactMarkdown>
+
+
+
+            <h4> {comments.length}개의 댓글<br /> </h4>
+
+            <CommentInput>
+                <textarea typeof="text" placeholder="댓글을 작성하세요" ref={content} /><br />
+                <button onClick={addComment} type="button">댓글작성</button>
+
+            </CommentInput>
+
+            {comments.map((comment, index) => {
+
+               
+                
+                return (
+                    <CommentContainer key={index}>
+                        <CommentData>
+                            <div>
+                                <span> {comment.username}</span><br />
+                                {comment.createdAt}
+                            </div>
+
+                            {comment.username === Username ? 
+                            
+                                <div style={{display:"flex", justifyContent: "flex-end", gridColumn:"auto/span 1"}}>
+                                <div onClick={openEdit}>수정&nbsp;&nbsp;</div>
+                                <div onClick={()=> deleteComment(comment.id)}> 삭제</div>
+                                </div>
+                                : null} 
+                        </CommentData>
+                        {commentEdit ? <textarea defaultValue={comment.content}/> : <>{comment.content}</>}
+                        
+                    </CommentContainer>
+
+                );
+            })}
         </DetailContainer>
 
     );
 }
 
 const DetailContainer = styled.div`
+padding-top: 20px;
+max-width: 768px;
+margin: auto;
+word-break: keep-all;
+overflow-wrap: break-word;
+line-height: 30px;
+padding-bottom: 100px;
+
+@media screen and (max-width:768px) {
+    width: 90%;
+    margin: auto;
+
+    img {
+        width: 100%;
+        background-color: aliceblue;
+    }
+}
 `;
+
+const Mybtn = styled.div`
+display: flex;
+justify-content: flex-end;
+`;
+
+const PostUser = styled.div`
+
+span {
+    font-weight: bold;
+}
+`;
+
+const TagContainer = styled.div`
+margin-top:30px;
+`;
+
+const Tag = styled.span`
+color:#12b886;
+background-color: #F8F9FA;
+padding:10px 12px;
+border-radius: 30px;
+
+`;
+
+
+const CommentInput = styled.div`
+
+padding-bottom: px;
+textarea {
+    border: 1px solid #eee;
+    min-width: 733px;
+    height: 58px;
+    padding: 16px 16px 24px 16px;
+    margin: auto;
+    resize: none;
+    :focus {
+        outline: none;
+    }
+}
+button {
+   
+    margin: auto auto auto auto;
+    background-color: #12b886;
+    border-radius: 5px;
+    border: 1px solid #12b886;
+    color: white;
+   height: 32px;
+   width: 95px;
+   font-weight: bold;
+   font-size: 16px;
+   float: right;
+   right: 0;
+  
+
+   &:hover {
+    background-color:#20C997;
+   }
+}
+`;
+const CommentContainer = styled.div`
+padding: 20px 0px;
+
+
+`;
+
+const CommentData = styled.span`
+display: grid;
+grid-template-columns: 1fr 0.1fr;
+grid-template-rows: 1fr;
+font-size: 12px;
+color: #868296;
+
+span {
+    color:#222;
+    font-weight: bold;
+    font-size: 14px;
+    
+    
+}
+`;
+
 
 export default Detail;

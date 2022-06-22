@@ -9,11 +9,14 @@ const Header = () => {
 
     const isLoginCheck = () => {
         //토큰 부분으로 바꿔야함
-        localStorage.getItem('id')}
+        localStorage.getItem('username')
+        localStorage.getItem('wtw-token')
+    }
 
     const LogOut = () => {
         //토큰 부분으로 바꿔야함
-        localStorage.removeItem('id');
+        localStorage.removeItem('username')
+        localStorage.removeItem('wtw-token');
         setIsLogin(false);
     }
 
