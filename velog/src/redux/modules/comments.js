@@ -9,13 +9,7 @@ const REMOVE = 'comment/REMOVE';
 
 
 const initialState = {
-    list: [
-      {
-        "username": "username",
-        "content":"댓글 내용",
-        "id": 1
-      }
-    ],
+    list: [],
   };
   
   //action creators
@@ -65,7 +59,7 @@ const initialState = {
 
 export const updateCommentDB = (commentID, comment, token) => {
   return function (dispatch) {
-    axios.put(`http://3.34.178.13/comments/${commentID}`, comment, {
+    axios.put(`http://3.34.178.13/comments/update/${commentID}`, comment, {
       headers: {
         'Authorization' : `Bearer ${token}`
       }

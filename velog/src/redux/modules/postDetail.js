@@ -15,12 +15,15 @@ const initialState = {
             "contentSummary": "게시글 요약",
             "createdAt": "작성일자",
             "imgPath": "썸네일 이미지url",
+            "member": "작성자정보?",
             "username": "username",
             "id": 1,
             "tagString": "tag1, tag2, tag3"
         }
     ],
 };
+
+
 
 
 //action creators
@@ -35,9 +38,7 @@ export function addPost(post){
 export const getpostDetailDB = (list_index) => {
     return async function (dispatch) {
         const response = await axios.get(`http://3.34.178.13/viewboards/${list_index}`)
-           dispatch(getPostDetail(response.data)) 
-           console.log(response.data)
-            
+           dispatch(getPostDetail(response.data))  
     };
 };
 export const addPostDB = (post, token) => {

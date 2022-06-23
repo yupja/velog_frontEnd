@@ -1,85 +1,101 @@
-import React, { useEffect } from "react";
+import React,{useEffect} from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux/es/exports";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import { getpostAc } from "./redux/modules/post";
 import axios from "axios";
+import { dateView } from "./shared/time";
+import moment from "moment";
+import 'moment/locale/ko'
+import DefaultProfile from "./styles/DefaultProfile.png"
 
-const Main = () => {
+
+const Main = (props) => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  const list_data = useSelector((state) => state.post.list)
-  console.log(list_data, "리스트?")
 
+  const list_data = useSelector((state) =>state.post.list)
+  console.log(list_data,"리스트?")
+  
   React.useEffect(() => {
     dispatch(getpostAc());
-  }, []);
+  },[]);
 
-  const userCheck = () => {
-    axios.get()
-  }
+  
 
   return (
-    <>
-      {list_data.map((list, id) => {
-        return (
-          <>
-            <CardWrap key={list.id} onClick={() => { Navigate(`/detail/${list.id}`)}}>
-              <CardImg src={list.imgPath}/>
-              <Body>
-                <Title>
-                  {list.title}
-                </Title>
-                <Description>
-                  {list.contentSummary}
-                </Description>
-                <DtCmt>
-                  <span>
-                    <span>{list.createdAt}</span>
-                    {" ∙ "}
-                    <span>댓글갯수</span>
-                  </span>
-                </DtCmt>
-              </Body>
-              <Footer>
-                <FooterLeft>
-                  <ProIm></ProIm>
-                  <Span>by</Span>
-                  <UserName>작성자</UserName>
-                </FooterLeft>
-                <Like>
-                  <span>하트</span>
-                </Like>
-              </Footer>
-            </CardWrap>
+    <> <Containter>
+    {list_data.map((list, id) => {
+            return(
+             
 
-          </>
-        )
-      })}
-    </>
+        <CardWrap key={list_data.id} onClick={() => {Navigate(`/detail/${list.id}`)}}>
+        {/* <CardImg>{list.thumbnail}</CardImg> */}
+        <CardImg src={list.imgPath}/>
+        
+        <Body>
+          <Title>
+        {list.title}
+          </Title>
+          <Description>
+            {list.contentSummary}
+          </Description>
+          <DtCmt>
+            <span>
+              {/* <span>{list.date}</span> */}
+              <span>{moment(list.date).fromNow()}</span>
+            </span>
+          </DtCmt>
+        </Body>
+        <Footer>
+          <FooterLeft>
+            <ProIm src={DefaultProfile}></ProIm>
+            <Span>by</Span>
+            <UserName>{list.username}</UserName>
+          </FooterLeft>
+          <Like>
+            <span>🤍 0</span>
+          </Like>
+        </Footer>
+      </CardWrap>
+     
+    ) })}
+    </Containter> </>
 
-  );
+    );
 
 };
 
-export const DtCmt = styled.div`
+const Containter = styled.body`
+  /* background-color: blue;
+  width: 100%;
+  height: 100%; */
+  display: grid;
+grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+margin:40px auto ;
+width: 80vw;
+`;
+
+
+const DtCmt = styled.div`
   font-size: 0.75rem;
   color: gray;
 `;
 
-export const CardWrap = styled.div`
+const CardWrap = styled.div`
   display: flex;
   width: 20rem;
   background-color: #fff;
-  border: 1px solid black;
+  border: 1px solid transparent;
   border-radius: 4px;
   box-shadow: rgb(0 0 0 / 4%) 0px 4px 16px 0px;
   transition: box-shadow 0.25s ease-in 0s, transform 0.25s ease-in 0s;
   margin: 1rem;
+  /* margin: 0 auto; */
   overflow: hidden;
   flex-direction: column;
+  justify-items: center;
   margin: 20px 20px 20px 20px;
   float: left;
   &:hover{
@@ -88,13 +104,14 @@ export const CardWrap = styled.div`
 } 
 
 `;
-export const CardImg = styled.img`
+const CardImg = styled.img`
+  
   background-color: yellowgreen;
   background-size: cover;
   background-repeat: no-repeat;
   height: 167px;
 `;
-export const Body = styled.div`
+const Body = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -104,7 +121,7 @@ export const Body = styled.div`
   height: 140px;
   padding: 16px;
 `;
-export const Title = styled.h4`
+const Title = styled.h4`
   font-size: 16px;
   margin: 0 0 4px;
   font-weight: 900;
@@ -115,7 +132,7 @@ export const Title = styled.h4`
   overflow: hidden;
   text-align: left;
 `;
-export const Description = styled.p`
+const Description = styled.p`
   margin: 0 0 24px;
   width: 288px;
   height: 73px;
@@ -133,7 +150,7 @@ export const Description = styled.p`
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 `;
-export const Footer = styled.div`
+const Footer = styled.div`
   padding: 10px 16px;
   height: 44px;
   display: flex;
@@ -142,23 +159,23 @@ export const Footer = styled.div`
   /* margin: 20px 20px 20px 20px; */
   cursor: pointer;
 `;
-export const FooterLeft = styled.div`
+const FooterLeft = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 `;
-export const Span = styled.span`
+const Span = styled.span`
   color: rgb(134, 142, 150);
   font-size: 0.75rem;
   line-height: 1.5;
   margin-right: 0.25rem;
 `;
-export const UserName = styled.span`
+const UserName = styled.span`
   font-size: 12px;
   font-weight: bold;
 `;
-export const Like = styled.div`
+const Like = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -170,11 +187,11 @@ export const Like = styled.div`
     font-size: 1rem;
   }
 `;
-export const ProIm = styled.div`
-width: 24px;
-height: 24px;
+const ProIm = styled.img`
+width: 25px;
+height: 25px;
 border-radius: 25px;
-border: 1px solid black;
+border: 1px solid transparent;
 margin-right: 10px;
 `;
 

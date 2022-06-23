@@ -9,19 +9,7 @@ const UPDATE = "UPDATE"
 
 
 const initialState = {
-  list: [
-    {
-      "title": "게시글 제목",
-      "content": "게시글 내용",
-      "contentSummary": "게시글 요약",
-      "createdAt": "작성일자",
-      "imgPath": "썸네일 이미지url",
-      "username": "username",
-      "id": 1,
-      "tagString": "tag1, tag2, tag3"
-
-    }
-  ],
+  list: [],
 };
 
 export function createPost(post) {

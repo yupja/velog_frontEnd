@@ -4,21 +4,36 @@ import MyAbout from "./MyAbout";
 import { useMatch } from "react-router-dom";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
+import profile from "./styles/DefaultProfile.png"
+import { useEffect, useState } from "react";
+import { list } from "firebase/storage";
 
 const MyVelog = (props) => {
     console.log(props.Username)
+    const [isThumbnail, setIsThumbnail] = useState(false);
     const matchSeries = useMatch(`/@${props.Username}/series`)
     const matchAbout = useMatch(`/@${props.Username}/about`)
     const matchBoard = useMatch(`/@${props.Username}`)
     const Navigate = useNavigate();
     const list_data = useSelector((state) => state.post.list)
 
+
     return (
         <Container>
-            <h1 style={{marginTop:"5.625rem"}}>
-                @{props.Username}
-            </h1>
-            <hr style={{border:"0.5px solid #eee"}}/>
+            <ProfileContainer>
+                <img src={profile}/>
+                <div>
+                    <span>
+                        {props.Username}
+                    </span>
+                    개발자(fake)
+                </div>
+
+
+
+            </ProfileContainer>
+            <hr style={{ border: "0.5px solid #eee", margin:"32px 0px"}} />
+
             <div>
                 <Tabs>
                     <Tab isActive={matchBoard != null}>
@@ -38,32 +53,33 @@ const MyVelog = (props) => {
 
                         console.log(list)
                         return (
-                         
+
                             <>
-                               {list.username === props.Username ? 
-                               <MyCardWrap key={list.id} onClick={() => { Navigate(`/detail/${list.id}`) }}>
-                                    <img src={list.imgPath} />
-                                    <div>
-                                        <h2>
-                                            {list.title}
-                                        </h2>
-                                        <p>
-                                            {list.contentSummary}
-                                        </p>
+                                {list.username === props.Username ?
+                                    <MyCardWrap key={list.id} onClick={() => { Navigate(`/detail/${list.id}`) }}>
+                                       {list.imgPath !== null ? <img src={list.imgPath} /> : null } 
                                         <div>
-                                            <span>
-                                                <span>{list.date}</span>
-                                                {/* {" ∙ "}
-                                                <span>댓글갯수</span> */}
-                                            </span>
+                                            <h2>
+                                                {list.title}
+                                            </h2>
+                                            <p>
+                                                {list.contentSummary}
+                                            </p>
+                                            <div>
+                                                <span>
+                                                    <DateStyle>{list.date.substr(0, 10)}</DateStyle>
+
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div>
+                                        <div>
 
+                                            <hr style={{ border: "0.5px solid #eee", marginTop: "60px" }} />
 
-                                    </div>
-                                </MyCardWrap> : <>no</>}
-                                
+                                        </div>
+
+                                    </MyCardWrap> : null}
+
 
                             </>
                         )
@@ -78,6 +94,7 @@ const MyVelog = (props) => {
                     <Route path="about" element={<MyAbout />} />
                 </Routes>
             </div>
+
         </Container>
 
 
@@ -87,13 +104,47 @@ const MyVelog = (props) => {
 const Container = styled.div`
 max-width: 768px;
 margin: auto;
+padding-bottom: 100px;
+margin-top: 5.625rem;
+overflow: hidden;
+
+`;
+
+const DateStyle = styled.span`
+color:#868296;
+font-size: 14px;
+`;
+
+const ProfileContainer = styled.div`
+display: flex;
+
+div {
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+}
+
+span{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    
+}
+
+img{
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    margin-right: 16px;
+}
 `;
 
 const Tabs = styled.div`
 display: flex;
 justify-content: center;
-margin-top: 4.5rem;
 
+margin-top: 4.5rem;
+    margin-bottom: 4.5rem;
 
 
 `;
@@ -133,7 +184,13 @@ color: ${(props) =>
 `;
 
 const MyCardWrap = styled.div`
-
+text-overflow: ellipsis  ellipsis;
+margin-bottom: 30px;
+img{
+    width: 100%;
+    height: 402px;
+    object-fit: cover;
+}
 `;
 
 

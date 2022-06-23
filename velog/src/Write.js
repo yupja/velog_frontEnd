@@ -154,7 +154,6 @@ const Write = () => {
                         ref={editorRef}
                         previewStyle="vertical"
                         height="80vh"
-                        initialValue="예시"
                         placeholder="당신의 이야기를 적어보세요 ... "
                         useCommandShortcut={false}
                         previewHighlight={false}
