@@ -45,6 +45,19 @@ export const getpostAc = () => {
   };
 };
 
+//태그로 게시글 찾는 미들웨어 (메인 페이지 복붙해서 만든 후 태그 찾는 url에 넣기 )
+export const getPostByTagDB = (tag) => {
+  return function (dispatch) {
+    axios.get(`http://3.34.178.13/boards/${tag}`)
+      .then(response => {
+        dispatch(getPost(response.data));
+      })
+      .catch(error => {
+        console.log("get error", error)
+      })
+  };
+};
+
 export const addpostAc = (post, token) => {
   return function (dispatch) {
     axios.post("http://3.34.178.13/boards", post, {

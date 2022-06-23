@@ -9,11 +9,13 @@ import { addCommentDB, getCommentDB, removeCommentDB, updateCommentDB } from "./
 import { deletePostDB } from "./redux/modules/post";
 import { getTagsDB } from "./redux/modules/tags";
 import { getCommentDateDB, getDateDB } from "./redux/modules/date";
+import { getLikesDB } from "./redux/modules/likes";
 
 
 const Detail = (props) => {
 const [isEdit, setIsEdit] = useState(false);
-
+const likeCount = useSelector((state) => state.likes.list)
+const [iLike, setILike ] = useState(false);
     const params = useParams();
     const list_index = params.id
     // const [content, setContent] = useState("");
@@ -36,6 +38,7 @@ const [isEdit, setIsEdit] = useState(false);
         dispatch(getCommentDB(list_index))
         dispatch(getTagsDB(list_index))
         dispatch(getDateDB(list_index))
+        dispatch(getLikesDB(list_index))
     }, [])
 
 
@@ -101,8 +104,11 @@ const [isEdit, setIsEdit] = useState(false);
             </TagStyle>
         );
     })}
+    <div style={{paddingTop:"20px"}}>
+        {iLike ? <>💚</> : <>🤍</> }
+        {likeCount == null ? <>{likeCount}</> : <>0</>}
+    </div>
 
-   
             </TagContainer>
 
             {post_detail.username === props.Username ?
@@ -136,12 +142,35 @@ const [isEdit, setIsEdit] = useState(false);
                                 {comment.createdAt.substr(0,10)}
                             </div>
                             {comment.username === props.Username ?
+
                             <>
-                             {isEdit ? <br/> : 
+
+                             {isEdit ? null : 
+                                <>
+
                              <div style={{ display: "flex", justifyContent: "flex-end", gridColumn: "auto/span 1" }}>
                                     <div onClick={openEdit} >수정&nbsp;&nbsp;</div>
                                     <div onClick={() => deleteComment(comment.id)}> 삭제</div>
-                                </div>}
+                                    </div>
+                                    
+                                    {/* <div>
+                                        <span>{comment.content}</span> 
+                                    </div> */}
+                                    </>
+                                    
+                               } 
+                                
+                                
+                                </>
+                            
+                              :   null
+        
+                                
+                                // <span>{comment.content}</span> 
+               
+                               }
+
+                              
 
                             {isEdit ?  <CommentInput>
                                 
@@ -149,12 +178,8 @@ const [isEdit, setIsEdit] = useState(false);
                                 
                                 <button onClick={() => editComment(comment.id)} type="button">댓글 수정</button>
                                 <BackBtn onClick={()=>{setIsEdit(false)}} type="button">뒤로가기</BackBtn>
-                             </CommentInput> : <>{comment.content}</> }
-                            </>
-                               
-                             
-                              
-                              :  null }
+                             </CommentInput> :<><br/> <span>{comment.content}</span>  </>}
+                           
                         </CommentData>
                       
                     </CommentContainer>
@@ -273,9 +298,6 @@ padding: 20px 0px;
 `;
 
 const CommentData = styled.span`
-display: grid;
-grid-template-columns: 1fr 0.1fr;
-grid-template-rows: 1fr;
 font-size: 12px;
 color: #868296;
 

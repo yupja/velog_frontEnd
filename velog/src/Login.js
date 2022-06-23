@@ -43,6 +43,7 @@ const Login = (props) => {
     }
     const onNameHandler = (event) => {
         setUserName(event.currentTarget.value)
+        console.log(UserName)
         if(UserName === null){
             setNameError(true);
         }   else {
@@ -88,11 +89,16 @@ const Login = (props) => {
         )
             .then(function (response) {
                 console.log(response)
-                if (response.data.token) {
+                if (!response.data.result) {
+                    console.log(response.data.errMsg)
+                    setError(response.data.errMsg)
+                } 
+                else if (response.data.token) {
                     localStorage.setItem('wtw-token', response.data.token);
                     localStorage.setItem('username', UserName)
                     window.location.replace("/")
                 }
+
 
             })
             .catch(function (error) {
@@ -146,10 +152,9 @@ const Login = (props) => {
                                         <LoginBtn isActive={register} onClick={Register}>회원가입</LoginBtn>
                                         <br/>
                                         
-                                        {nameError ? <ErrorMsg>❗️ 아이디를 입력하세요!</ErrorMsg> : null}
-                                        {pwError ? <ErrorMsg>❗️ 비밀번호는 5자 이상이어야 합니다!</ErrorMsg> : null}
-                                        {mailError ?  <ErrorMsg>❗️ 이메일을 확인해주세요!</ErrorMsg> : null}
-                                        {error === "중복된 사용자 ID가 존재합니다." ? <ErrorMsg>❗️ {error}</ErrorMsg> : null}
+                                        {nameError ? <ErrorMsg>아이디를 입력하세요!</ErrorMsg> : null}
+                                        {pwError ? <ErrorMsg>비밀번호는 5자 이상이어야 합니다!</ErrorMsg> : null}
+                                        {error !== "" ? <ErrorMsg>{error}</ErrorMsg> : null}
                                         <div style={{ marginTop: "30px" , textAlign:"right"}}>
                                             계정이 이미 있으신가요?
                                             <span onClick={() => { setRegister(false) }}
@@ -175,9 +180,9 @@ const Login = (props) => {
                                             <LoginBtn isActive={register} onClick={Login}>로그인</LoginBtn>
    
                                         </InputWrapper>
-                                        {nameError ? <ErrorMsg>❗️ 아이디를 입력하세요!</ErrorMsg> : null}
-                                        {pwError ? <ErrorMsg>❗️ 비밀번호는 5자 이상이어야 합니다!</ErrorMsg> : null}
-                                        {!error === "" ? <ErrorMsg>❗️ {error}</ErrorMsg> : null}
+                                        {nameError ? <ErrorMsg>아이디를 입력하세요!</ErrorMsg> : null}
+                                        {pwError ? <ErrorMsg>비밀번호는 5자 이상이어야 합니다!</ErrorMsg> : null}
+                                        {error !== "" ? <ErrorMsg>{error}</ErrorMsg> : null}
 
                                         <div style={{ marginTop: "20px", textAlign:"right" }}>
                                             아직 회원이 아니신가요?

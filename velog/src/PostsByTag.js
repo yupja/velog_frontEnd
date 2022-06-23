@@ -3,16 +3,15 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux/es/exports";
 import styled from "styled-components";
-import { getpostAc } from "./redux/modules/post";
+import { getpostAc, getPostByTagDB } from "./redux/modules/post";
 import axios from "axios";
 import { dateView } from "./shared/time";
 import moment from "moment";
 import 'moment/locale/ko'
 import DefaultProfile from "./styles/DefaultProfile.png"
-import { getLikesDB } from "./redux/modules/likes";
 
 
-const Main = (props) => {
+const PostsByTag = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
 
@@ -20,19 +19,14 @@ const Main = (props) => {
   console.log(list_data,"리스트?")
   
   React.useEffect(() => {
-    dispatch(getpostAc());
+    dispatch(getPostByTagDB());
   },[]);
 
-
-  const likeCount = useSelector((state) => state.likes.list)
   
 
   return (
     <> <Containter>
     {list_data.map((list, id) => {
-      dispatch(getLikesDB(list.id))
-console.log(likeCount)
-
             return(
              
 
@@ -61,7 +55,7 @@ console.log(likeCount)
             <UserName>{list.username}</UserName>
           </FooterLeft>
           <Like>
-            <span>🤍</span>
+            <span>🤍 0</span>
           </Like>
         </Footer>
       </CardWrap>
@@ -80,15 +74,16 @@ const Containter = styled.body`
   display: flex;
 flex-wrap: wrap;
 margin:60px auto ;
-width: 90vw;
-justify-content: center;
-/* 
+width: 100vw;
+
 display: grid;
-grid-template-columns: 1fr 1fr 1fr 1fr 1fr; */
+grid-template-columns: 1fr 1fr 1fr;
 
 @media screen and (max-width: 800px) {
-  grid-template-columns: 1fr 1fr;};
+  grid-template-columns: 1fr 1fr};
 
+  @media screen and (max-width: 550px) {
+  grid-template-columns: 1fr};
 
 `;
 
@@ -116,11 +111,7 @@ const CardWrap = styled.div`
   &:hover{
     transform: translateY(-2px);
     box-shadow: rgb(0 0 0 / 8%) 0px 12px 20px 0px;
-
- 
 } 
-@media screen and (max-width: 800px) {
-    width:100vw;};
 
 `;
 const CardImg = styled.img`
@@ -216,4 +207,4 @@ margin-right: 10px;
 
 
 
-export default Main;
+export default PostsByTag;
